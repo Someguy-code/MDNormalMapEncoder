@@ -173,12 +173,6 @@
     <ClCompile Include="Utils\PaletteUtils.ixx" />
     <ClCompile Include="Utils\SerializationUtils.ixx" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="LICENSE.TXT" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Archivos de origen">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Archivos de encabezado">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Archivos de recursos">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Archivos de origen\BMPHandler">
+      <UniqueIdentifier>{8ab334d1-bbdb-4e27-a166-eaaed23562d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Dithering">
+      <UniqueIdentifier>{60f77c10-12b7-47a9-b327-3c4b7f4d4d47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Material">
+      <UniqueIdentifier>{6034b1f0-b1c7-4703-82db-847632354236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Types">
+      <UniqueIdentifier>{d2e91cd4-29b5-4a79-8600-80108450b4a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Utils">
+      <UniqueIdentifier>{f42ce6a7-5ef2-4fe2-a994-91d2d48bc436}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandLineArguments.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageComponentMerge.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageSplit.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="MDNormalMapEncoder.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="mian.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalMapPalette.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="PaletteReduction.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="BMPHandler\BMPHandler.cpp">
+      <Filter>Archivos de origen\BMPHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="BMPHandler\BMPHandler.ixx">
+      <Filter>Archivos de origen\BMPHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="Dithering\ColorError.ixx">
+      <Filter>Archivos de origen\Dithering</Filter>
+    </ClCompile>
+    <ClCompile Include="Dithering\DitherImage.ixx">
+      <Filter>Archivos de origen\Dithering</Filter>
+    </ClCompile>
+    <ClCompile Include="Dithering\DitherKernels.ixx">
+      <Filter>Archivos de origen\Dithering</Filter>
+    </ClCompile>
+    <ClCompile Include="Dithering\LABColorError.ixx">
+      <Filter>Archivos de origen\Dithering</Filter>
+    </ClCompile>
+    <ClCompile Include="Dithering\NormalMapError.ixx">
+      <Filter>Archivos de origen\Dithering</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\DiffuseComponent.ixx">
+      <Filter>Archivos de origen\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\Material.ixx">
+      <Filter>Archivos de origen\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\SpecularComponent.ixx">
+      <Filter>Archivos de origen\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Material\SpecularData.ixx">
+      <Filter>Archivos de origen\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\CollectionUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\ExceptionUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\HashUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\MathUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\MegadriveUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\NormalMapUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\PaletteUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\SerializationUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Types\Color.ixx">
+      <Filter>Archivos de origen\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="Types\LABColor.ixx">
+      <Filter>Archivos de origen\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="Types\RawImage.ixx">
+      <Filter>Archivos de origen\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="Types\Vector3.ixx">
+      <Filter>Archivos de origen\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="Dithering\ErrorTypeInterface.ixx">
+      <Filter>Archivos de origen\Dithering</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="LICENSE.TXT" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="MDNormalMapEncoder/MDNormalMapEncoder.vcxproj" Id="f3016031-c515-4069-8b41-cbdd93d058b3" />
+</Solution>

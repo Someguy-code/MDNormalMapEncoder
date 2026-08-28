@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
         {
             std::cout << "Normal maps encoder for the Sega Megadrive/Genesis. Usage example:\n";
             std::cout << "MDNormalMapEncoder -im \"torus_mask.bmp\" -in \"torus_normal.bmp\" -ia \"torus_albedo.bmp\" -ot \"torus_out.bmp\" -om \"torus_out.mat\" -nhs 6 -nvs 3 -amc 2\n";
-            std::cout << "Possible parameter:\n";
+            std::cout << "Supported parameters:\n";
             oCommandLineArguments.PrintArgumentDescriptions();
             std::cout << "NOTE: All colors in quotes, 3 8-bit RGB separated by commas.\n";
             return 0;

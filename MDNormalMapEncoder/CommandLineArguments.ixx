@@ -24,13 +24,13 @@ export struct CommandLineArguments
 			[&sArgumentValue](const char** _pValue) { *_pValue = sArgumentValue; },
 			[&sArgumentName , &sArgumentValue](unsigned int* _pValue) {
 				if (sscanf_s(sArgumentValue, "%d", _pValue) != 1)
-					throw std::runtime_error(std::format("Unexpetcted value type for '{}'", sArgumentName));},
+					throw std::runtime_error(std::format("Unexpected value type for '{}'", sArgumentName));},
 			[&sArgumentName , &sArgumentValue](float* _pValue) {
 				if (sscanf_s(sArgumentValue, "%f", _pValue) != 1)
-					throw std::runtime_error(std::format("Unexpetcted value type for '{}'", sArgumentName));},
+					throw std::runtime_error(std::format("Unexpected value type for '{}'", sArgumentName));},
 			[&sArgumentName , &sArgumentValue](ColorRGB* _pValue) {
 				if (sscanf_s(sArgumentValue, "%hhd, %hhd, %hhd", &_pValue->m_uR, &_pValue->m_uG, &_pValue->m_uB) != 3)
-					throw std::runtime_error(std::format("Unexpetcted value type for '{}'", sArgumentName));},
+					throw std::runtime_error(std::format("Unexpected value type for '{}'", sArgumentName));},
 		};
 
 		for (unsigned int uArgumentIndex = 0; uArgumentIndex < _uArgumentsCount; uArgumentIndex += 2)

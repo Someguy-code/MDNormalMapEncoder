@@ -8,8 +8,8 @@ To check the Megadrive-side implementation, please check [this tech-demo](https:
 
 All the generated material data is packed in a MAT binary file that can be attached to you Megadrive ROM as a BIN resource using SGDK's rescomp.
 The file contains the following fields:
-```
-* Include pure darkness flag (unsigned 8 bits): Specified whether an additional non-shaded color must be reserved (only needed when using ambient occlusion)
+
+* Include pure darkness flag (unsigned 8 bits): Specifies whether an additional non-shaded color must be reserved (only needed when using ambient occlusion)
 * Albedo colors:
   * Colors count (usigned 8 bits)
   * List of colors: RGB333 values, 3 x unsigned 8 bits
@@ -32,7 +32,6 @@ The file contains the following fields:
   * Log 2 of back shades count (unsigned 8 bit)
   * List of front shade colors. RGB333 values, 3 x unsigned 8 bits
   * List of back shade colors. RGB333 values, 3 x unsigned 8 bits
-```
 
 ## Supported lighting model
 

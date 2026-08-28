@@ -2,6 +2,38 @@
 
 Utility to encode normals maps in a format usable by the Sega Megadrive / Genesis. It can combine the information from several input images into one or more 4-bit images + a material file. The resulting images can be loaded directly into the Megadrive VRAM and displayed as sprites or scroll planes. They do not need to be modified to apply lighting to them. Instead, the material files describe the lighting data associated with every color in the image. Modifying the palette entries assined to them is enough to change the image lighting.
 
+To check the Megadrive-side implementation, please check [this tech-demo](https://github.com/Someguy-code/MDNormalMapTest)
+
+## MAT file format
+
+All the generated material data is packed in a MAT binary file that can be attached to you Megadrive ROM as a BIN resource using SGDK's rescomp.
+The file contains the following fields:
+```
+* Include pure darkness flag (unsigned 8 bits): Specified whether an additional non-shaded color must be reserved (only needed when using ambient occlusion)
+* Albedo colors:
+  * Colors count (usigned 8 bits)
+  * List of colors: RGB333 values, 3 x unsigned 8 bits
+* Normals groups:
+  * Normals groups count (unsigned 8 bit)
+  * List of normals groups: Pairs first-last indices defining a color range. 2 x unsigned 8 bit
+* Normals:
+  * Normals count (unsigned 8 bit)
+  * List of normals: 3D directions normalized in the [127, -128] range. 3 x signed 8 bit
+* Diffuse component:
+  * Colors written as RGB33 flag (unsigned 8 bit). 0 = Packed big-endian 16bit VDP colors, 1 = RGB333
+  * Log 2 of front shades count (unsigned 8 bit)
+  * Log 2 of back shades count (unsigned 8 bit)
+  * Padding byte (only present if needed to align the following data to 16-bit)
+  * List of front shade colors. Can be 16bit packed VDP colors or RGB333
+  * List of back shade colors. Can be 16bit packed VDP colors or RGB333
+* Has specular component flag (unsigned 8 bit)
+* Specular component (if available)
+  * Log 2 of front shades count (unsigned 8 bit)
+  * Log 2 of back shades count (unsigned 8 bit)
+  * List of front shade colors. RGB333 values, 3 x unsigned 8 bits
+  * List of back shade colors. RGB333 values, 3 x unsigned 8 bits
+```
+
 ## Supported lighting model
 
 The data generated with this tool supports the following features:

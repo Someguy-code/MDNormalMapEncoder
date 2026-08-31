@@ -167,6 +167,7 @@
     <ClCompile Include="Utils\CollectionUtils.ixx" />
     <ClCompile Include="Utils\ExceptionUtils.ixx" />
     <ClCompile Include="Utils\HashUtils.ixx" />
+    <ClCompile Include="Utils\KMeansUtils.ixx" />
     <ClCompile Include="Utils\MathUtils.ixx" />
     <ClCompile Include="Utils\MegadriveUtils.ixx" />
     <ClCompile Include="Utils\NormalMapUtils.ixx" />

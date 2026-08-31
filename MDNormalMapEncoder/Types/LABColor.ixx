@@ -9,11 +9,11 @@ import Vector3;
 export struct LABColor
 {
 	//Perceived luminance
-	float m_fL;
+	float m_fL = 0.f;
 	//Green-Red balance
-	float m_fA;
+	float m_fA = 0.f;
 	//Blue-Yellow balance
-	float m_fB;
+	float m_fB = 0.f;
 
 	LABColor() = default;
 	LABColor(float _fL, float _fA, float _fB)
@@ -125,7 +125,7 @@ export struct LABColor
 		return _oLeftHandSide;
 	}
 
-	LABColor& operator*=(const float _fValue)
+	LABColor& operator*=(float _fValue)
 	{
 		m_fL = m_fL * _fValue;
 		m_fA = m_fA * _fValue;
@@ -133,9 +133,23 @@ export struct LABColor
 		return *this;
 	}
 
-	friend LABColor operator*(LABColor _oLeftHandSide, const float _fRightHandSide)
+	friend LABColor operator*(LABColor _oLeftHandSide, float _fRightHandSide)
 	{
 		_oLeftHandSide *= _fRightHandSide;
+		return _oLeftHandSide;
+	}
+
+	LABColor& operator/=(float _fValue)
+	{
+		m_fL = m_fL / _fValue;
+		m_fA = m_fA / _fValue;
+		m_fB = m_fB / _fValue;
+		return *this;
+	}
+
+	friend LABColor operator/(LABColor _oLeftHandSide, float _fRightHandSide)
+	{
+		_oLeftHandSide /= _fRightHandSide;
 		return _oLeftHandSide;
 	}
 
@@ -147,12 +161,17 @@ export struct LABColor
 			MathUtils::Lerp(m_fB, _oOtherColor.m_fB, _fBalance) };
 	}
 
-	float GetDistance(const LABColor& _oOther) const
+	float GetSqrDistance(const LABColor& _oOther) const
 	{
 		const float fDeltaL = m_fL - _oOther.m_fL;
 		const float fDeltaA = m_fA - _oOther.m_fA;
 		const float fDeltaB = m_fB - _oOther.m_fB;
-		return std::sqrt(fDeltaL * fDeltaL + fDeltaA * fDeltaA + fDeltaB * fDeltaB);
+		return fDeltaL * fDeltaL + fDeltaA * fDeltaA + fDeltaB * fDeltaB;
+	}
+
+	float GetDistance(const LABColor& _oOther) const
+	{
+		return std::sqrt(GetSqrDistance(_oOther));
 	}
 };
 

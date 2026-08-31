@@ -13,7 +13,7 @@ import RawImage;
 
 export namespace NormalMapUtils
 {
-	//Comptes horizontal and vertical angles from a normal map color
+	//Computes horizontal and vertical angles from a normal map color
 	std::pair<float, float> GetAnglesFromColor(const ColorRGB& _oColor)
 	{
 		const float fHorizontalAngle = static_cast<float>(atan2(_oColor.m_uG - 128, _oColor.m_uR - 128));

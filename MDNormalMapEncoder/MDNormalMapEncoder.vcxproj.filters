@@ -123,5 +123,8 @@
     <ClCompile Include="Dithering\ErrorTypeInterface.ixx">
       <Filter>Archivos de origen\Dithering</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\KMeansUtils.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

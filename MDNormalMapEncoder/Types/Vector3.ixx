@@ -5,9 +5,9 @@ import MathUtils;
 
 export struct Vector3
 {
-	float m_fX;
-	float m_fY;
-	float m_fZ;
+	float m_fX = 0.f;
+	float m_fY = 0.f;
+	float m_fZ = 0.f;
 
 	Vector3() = default;
 	Vector3(const Vector3& _oOriginal) = default;

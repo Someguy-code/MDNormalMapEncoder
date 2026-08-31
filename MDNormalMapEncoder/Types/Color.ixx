@@ -118,9 +118,14 @@ struct Color
 		return m_uB | (m_uG << 8) | (m_uR << 16) | (m_uA << 24);
 	}
 
-	float GetDistance(const Color& _oOtherColor) const
+	float GetSqrDistance(const Color& _oOtherColor) const
 	{
 		return MathUtils::VectorModuleSquared(static_cast<float>(_oOtherColor.m_uR - m_uR), static_cast<float>(_oOtherColor.m_uG - m_uG), static_cast<float>(_oOtherColor.m_uB - m_uB));
+	}
+
+	float GetDistance(const Color& _oOtherColor) const
+	{
+		return std::sqrt(GetSqrDistance(_oOtherColor));
 	}
 
 	Color Lerp(const Color& _oOtherColor, float _fBalance) const

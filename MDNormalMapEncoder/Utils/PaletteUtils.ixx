@@ -5,6 +5,7 @@ module;
 
 export module PaletteUtils;
 
+import CollectionUtils;
 import RawImage;
 import std;
 
@@ -22,21 +23,16 @@ export namespace PaletteUtils
 		return oCollapsedImage;
 	}
 
-	template<typename ColorType>
-	struct DefaultColorsDistance
-	{
-		static float operator()(const ColorType& _oColor1, const ColorType& _oColor2){return _oColor1.GetDistance(_oColor2);}
-	};
-
-	template<typename ColorType, typename ColorDistance = DefaultColorsDistance<ColorType>>
+	template<typename ColorType, typename ColorDistance = CollectionUtils::GetSqrDistanceInvocable<ColorType>>
 	unsigned int GetClosestColorIndex(const ColorType& _oColor, std::span<const ColorType> _oPalette)
 	{
 		unsigned int uClosestIndex = 0;
 		float fClosestDistance = std::numeric_limits<float>::infinity();
 		const size_t uColorCount = _oPalette.size();
+		const auto oColorDistance = ColorDistance{ _oColor };
 		for(unsigned int uColorIndex = 0; uColorIndex < uColorCount; ++uColorIndex)
 		{
-			const float fDistance = ColorDistance{}(_oColor, _oPalette[uColorIndex]);
+			const float fDistance = oColorDistance(_oPalette[uColorIndex]);
 			if (fDistance < fClosestDistance)
 			{
 				fClosestDistance = fDistance;

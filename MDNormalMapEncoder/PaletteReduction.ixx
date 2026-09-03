@@ -15,13 +15,14 @@ export struct PaletteReduction
 		const std::vector<LABColor> oUniqueColors = GetUniqueColors(_oImage, _oMask);
 		if (oUniqueColors.size() < _uWantedPaletteColorsCount)
 			return PurgeRepreatedColors(std::move(GetMegadrivePalette(oUniqueColors)));
-		KMeansUtils<LABColor>::KMeans oKMeans = KMeansUtils<LABColor>::GetKMeans(oUniqueColors, _uWantedPaletteColorsCount, 1);
-		std::vector<LABColor> oReducedPalette = GetCollapseRepeatedColors(std::move(GetMegadrivePalette(oKMeans.m_oCentroids)), std::move(oKMeans.m_oGroups));
+		KMeansUtils<LABColor>::KMeans oKMeans = KMeansUtils<LABColor>::GetKMeans(oUniqueColors, _uWantedPaletteColorsCount, 10, GetColorInMegadrivePalette{});
+		std::vector<LABColor>& oReducedPalette = oKMeans.m_oCentroids;
 		oReducedPalette.insert(oReducedPalette.begin(), LABColor{});
 		return oReducedPalette;
 	}
 
 private:
+
 	struct GetColorInMegadrivePalette
 	{
 		LABColor operator()(const LABColor& _oColor) const
@@ -60,45 +61,5 @@ private:
 		auto itLast = std::unique(_oPalette.begin(), _oPalette.end());
 		_oPalette.erase(itLast, _oPalette.end());
 		return _oPalette;
-	}
-
-	static std::vector<LABColor> GetCollapseRepeatedColors(std::vector<LABColor> _oCentroids, std::vector<std::vector<LABColor>> _oGroups)
-	{
-		auto oCentroidModified = std::vector<bool>(_oCentroids.size());
-		size_t uCentroidsCount;
-		do
-		{
-			uCentroidsCount = _oCentroids.size();
-			for (size_t uCentroidIndex = 0; uCentroidIndex < uCentroidsCount; ++uCentroidIndex)
-			{
-				const LABColor& oCentroid = _oCentroids[uCentroidIndex];
-				std::vector<LABColor>& oGroup = _oGroups[uCentroidIndex];
-				for (size_t uOtherCentroidIndex = uCentroidIndex + 1; uOtherCentroidIndex < uCentroidsCount; ++uOtherCentroidIndex)
-				{
-					if (oCentroid == _oCentroids[uOtherCentroidIndex])
-					{
-						const std::vector<LABColor> oOtherGroup = _oGroups[uOtherCentroidIndex];
-						oGroup.append_range(oOtherGroup);
-						_oCentroids.erase(_oCentroids.begin() + uOtherCentroidIndex);
-						_oGroups.erase(_oGroups.begin() + uOtherCentroidIndex);
-						oCentroidModified[uCentroidIndex] = true;
-						--uOtherCentroidIndex;
-						--uCentroidsCount;
-					}
-				}
-			}
-		}
-		while (uCentroidsCount != _oCentroids.size());
-
-		for (size_t uCentroidIndex = 0; uCentroidIndex < uCentroidsCount; ++uCentroidIndex)
-		{
-			if (oCentroidModified[uCentroidIndex])
-			{
-				const std::vector<LABColor>& oGroup = _oGroups[uCentroidIndex];
-				_oCentroids[uCentroidIndex] = std::accumulate(oGroup.cbegin(), oGroup.cend(), LABColor{}) / static_cast<float>(oGroup.size());
-			}
-		}
-
-		return _oCentroids;
 	}
 };

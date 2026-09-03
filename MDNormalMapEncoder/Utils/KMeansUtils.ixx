@@ -13,9 +13,10 @@ struct KMeansUtils
 		std::vector<std::vector<T>> m_oGroups;
 	};
 
-	static KMeans GetKMeans(const std::vector<T>& _oElements, unsigned int _uGroupsCount, unsigned int _uInitializationsCount)
+	template <class CentroidProjectionType = std::identity>
+	static KMeans GetKMeans(const std::vector<T>& _oElements, unsigned int _uGroupsCount, unsigned int _uInitializationsCount, CentroidProjectionType _oCentroidProjection = {})
 	{
-		// Forgy method: Take _uGroupsCount random elements
+		// Forgy method: Use _uGroupsCount random elements as initial centroids
 		const std::vector<T> oElements = [&_oElements]()
 		{
 			const size_t uSeed = 123;
@@ -30,7 +31,11 @@ struct KMeansUtils
 		//Compute KMeans with up to _uInitializationsCount initializations and pick the best one
 		for (const auto oCentroids : oElements | std::views::take(_uGroupsCount * _uInitializationsCount) | std::ranges::views::chunk(_uGroupsCount))
 		{
-			const KMeans oCurrentKMeans = GetKMeansInternal(_oElements, oCentroids | std::ranges::to<std::vector>());
+			// If the chunk has not enough elements, just end
+			if (oCentroids.size() < _uGroupsCount)
+				break;
+			KMeans oCurrentKMeans = GetKMeansInternal(_oElements, oCentroids | std::ranges::to<std::vector>());
+			oCurrentKMeans = CollapseRepeatedCentroids(_oElements, oCurrentKMeans.m_oCentroids, _oCentroidProjection);
 			if (fSmallestSumOfSqrDistances > oCurrentKMeans.m_fSumOfSqrDistances)
 			{
 				fSmallestSumOfSqrDistances = oCurrentKMeans.m_fSumOfSqrDistances;
@@ -42,11 +47,6 @@ struct KMeansUtils
 	}
 
 private:
-	/*static std::vector<T> GetInitialCentroids(std::vector<T> _oElements, unsigned int _uGroupsCount)
-	{
-		// Forgy method: Take _uGroupsCount random elements (for now, simply the first _uGroupsCount elements)
-		return _oElements | std::views::take(_uGroupsCount) | std::ranges::to<std::vector>();
-	}*/
 
 	static KMeans GetKMeansInternal(const std::vector<T>& _oElements, std::vector<T> _oCentroids)
 	{
@@ -94,7 +94,6 @@ private:
 		return { uClosestIndex , fClosestSqrDistance };
 	}
 
-	template <class Proj = std::identity>
 	static std::vector<T> GetCentroids(const std::vector<std::vector<T>>& _oGroups)
 	{
 		std::vector<T> oCentroids;
@@ -102,5 +101,40 @@ private:
 		for (const std::vector<T>& _oGroup : _oGroups)
 			oCentroids.push_back(std::accumulate(_oGroup.cbegin(), _oGroup.cend(), T{}) / static_cast<float>(_oGroup.size()));
 		return oCentroids;
+	}
+
+	template <class CentroidProjectionType = std::identity>
+	static KMeans CollapseRepeatedCentroids(const std::vector<T>& _oElements, const std::vector<T>& _oCentroids, CentroidProjectionType _oCentroidProjection = {})
+	{
+		size_t uCentroidsCount = _oCentroids.size();
+
+		// Project centroids if needed
+		std::vector<T> oCollaspedCentroids;
+		oCollaspedCentroids.reserve(uCentroidsCount);
+		std::transform(_oCentroids.cbegin(), _oCentroids.cend(), std::back_insert_iterator(oCollaspedCentroids), _oCentroidProjection);
+
+		// Remove repeated centroids
+		std::sort(oCollaspedCentroids.begin(), oCollaspedCentroids.end());
+		auto itLast = std::unique(oCollaspedCentroids.begin(), oCollaspedCentroids.end());
+		oCollaspedCentroids.erase(itLast, oCollaspedCentroids.end());
+
+		// Re-group according to the new centroids
+		float fSumOfSquareDistances = 0;
+		std::vector<std::vector<T>> oGroups = GetGroups(_oElements, oCollaspedCentroids, fSumOfSquareDistances);
+
+		// Remove any empty groups
+		auto oCentroidsAndGroups = std::views::zip(oCollaspedCentroids, oGroups);
+		auto [itLastCentroidAndGroups, _] = std::ranges::remove_if(oCentroidsAndGroups, [](const auto& _oTuple) {
+			const auto& [_, oGroup] = _oTuple;
+			return oGroup.size() == 0;
+		});
+		size_t uDistance = std::distance(itLastCentroidAndGroups, oCentroidsAndGroups.end());
+		if (uDistance > 0)
+		{
+			oCollaspedCentroids.erase(oCollaspedCentroids.end() - uDistance, oCollaspedCentroids.end());
+			oGroups.erase(oGroups.end() - uDistance, oGroups.end());
+		}
+
+		return { fSumOfSquareDistances, std::move(oCollaspedCentroids), std::move(oGroups) };
 	}
 };

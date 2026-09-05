@@ -98,7 +98,7 @@ private:
 		InputAlbedo,
 		InputAmbientOcclusion,
 		NormalVerticalDivisions,
-		NormalHorizonatlDivisions,
+		NormalHorizontalDivisions,
 		AlbedoMaxColors,
 		LightLogShadesCount,
 		LightFrontColor,
@@ -125,8 +125,8 @@ private:
 		{"in", InputNormal},
 		{"ia", InputAlbedo},
 		{"io", InputAmbientOcclusion},
-		{"nhs", NormalVerticalDivisions},
-		{"nvs", NormalHorizonatlDivisions},
+		{"nvs", NormalVerticalDivisions},
+		{"nhs", NormalHorizontalDivisions},
 		{"amc", AlbedoMaxColors},
 		{"lsc", LightLogShadesCount},
 		{"lfc", LightFrontColor},
@@ -154,11 +154,11 @@ private:
 			.m_oValue = &m_oEncoderArguments.m_sAmbinetOcclusionFilename,
 			.m_sArgumentDescription = "Input ambient occlusion file .BMP)"}},
 		{NormalVerticalDivisions,{
-			.m_oValue = &m_oEncoderArguments.m_uHorizontalNormalMapSides,
-			.m_sArgumentDescription = "Number of vertical division for the normal pallete dome. Must be at least 2"}},
-		{NormalHorizonatlDivisions,{
 			.m_oValue = &m_oEncoderArguments.m_uVerticalNormalMapSides,
-			.m_sArgumentDescription = "Number of horizontal division for the normal pallete dome. Must be at least 1"}},
+			.m_sArgumentDescription = "Number of sides in the Z axis for the normal pallete dome. Must be at least 2"}},
+		{NormalHorizontalDivisions,{
+			.m_oValue = &m_oEncoderArguments.m_uHorizontalNormalMapSides,
+			.m_sArgumentDescription = "Number of sides in the XY plane for the normal pallete dome. Must be at least 2"}},
 		{AlbedoMaxColors,{
 			.m_oValue = &m_oEncoderArguments.m_uMaxAlbedoColors,
 			.m_sArgumentDescription = "Maximum number of albedo colors (quantize if needed)"}},

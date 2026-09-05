@@ -68,7 +68,7 @@ export struct MDNormalMapEncoder
                 throw std::runtime_error("Neither normal map nor albedo textures specified. Nothing to generate.");
             if (m_uHorizontalNormalMapSides < 2)
                 throw std::runtime_error("Specified horizontal normal map sides is below 2");
-            if (m_uVerticalNormalMapSides < 1)
+            if (m_uVerticalNormalMapSides < 2)
                 throw std::runtime_error("Specified vertical normal map sides is below 1");
             if (m_fSpecularIntensity < 0.f || m_fSpecularIntensity > 1.f)
                 throw std::runtime_error("Specified specular intesity is not in the [0, 1] range");

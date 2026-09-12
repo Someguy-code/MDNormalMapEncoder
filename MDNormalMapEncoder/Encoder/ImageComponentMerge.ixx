@@ -6,8 +6,13 @@ import Color;
 
 export struct ImageComponentMerge
 {
+    struct ImageAndPalette
+    {
+        RawImage<std::uint8_t> m_oImage;
+        std::vector<ColorRGB> m_oPalette;
+    };
     //Collapses all the image components ointo a single one
-    static std::pair<RawImage<std::uint8_t>, std::vector<ColorRGB>> GetMergedResult(const std::optional<std::pair<RawImage<std::uint8_t>, std::vector<ColorRGB>>>& _oNormalMapAndPalette, const std::optional<std::pair<RawImage<std::uint8_t>, std::vector<ColorRGB>>>& _oAlbedoAndPalette, const std::optional<RawImage<bool>>& _oAmbientOcclusion) {
+    static ImageAndPalette GetMergedResult(const std::optional<std::pair<RawImage<std::uint8_t>, std::vector<ColorRGB>>>& _oNormalMapAndPalette, const std::optional<std::pair<RawImage<std::uint8_t>, std::vector<ColorRGB>>>& _oAlbedoAndPalette, const std::optional<RawImage<bool>>& _oAmbientOcclusion) {
         std::vector<ColorRGB> oMergedPalette = GetMergedPalette(
             _oNormalMapAndPalette.has_value() ? &_oNormalMapAndPalette->second : nullptr,
             _oAlbedoAndPalette.has_value() ? &_oAlbedoAndPalette->second : nullptr,

@@ -14,7 +14,12 @@ export struct PaletteReduction
 	{
 		const std::vector<LABColor> oUniqueColors = GetUniqueColors(_oImage, _oMask);
 		if (oUniqueColors.size() < _uWantedPaletteColorsCount)
-			return PurgeRepreatedColors(std::move(GetMegadrivePalette(oUniqueColors)));
+		{
+			std::vector<LABColor> oReducedPalette = PurgeRepreatedColors(std::move(GetMegadrivePalette(oUniqueColors)));
+			oReducedPalette.insert(oReducedPalette.begin(), LABColor{});
+			return oReducedPalette;
+		}
+
 		KMeansUtils<LABColor>::KMeans oKMeans = KMeansUtils<LABColor>::GetKMeans(oUniqueColors, _uWantedPaletteColorsCount, 10, GetColorInMegadrivePalette{});
 		std::vector<LABColor>& oReducedPalette = oKMeans.m_oCentroids;
 		oReducedPalette.insert(oReducedPalette.begin(), LABColor{});

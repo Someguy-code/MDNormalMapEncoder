@@ -56,7 +56,7 @@ private:
 
 	static void ApplyErrorDifussionMatrix(std::mdspan<ColorErrorType, std::dextents<size_t, 2>> _oErrorImageRect, unsigned int _uX, unsigned int _uY, std::span<const ColorType> _oPalette, bool _bIsLeftToRight)
 	{
-		static const RawImage<float>& oFloydSteinbergErrorDifussionMatrix = GetDitherKernel("None");
+		static const RawImage<float>& oFloydSteinbergErrorDifussionMatrix = GetDitherKernel("FloydSteinberg");
 
 		static const unsigned int uErrorDifussionMatrixHalfWidth = oFloydSteinbergErrorDifussionMatrix.m_uWidth / 2;
 		static const unsigned int uErrorDifussionMatrixHalfHeight = oFloydSteinbergErrorDifussionMatrix.m_uHeight / 2;

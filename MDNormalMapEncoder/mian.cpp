@@ -1,5 +1,6 @@
 import CommandLineArguments;
-import MDNormalMapEncoder;
+import Encoder;
+import ResultWriter;
 import std;
 
 int main(int argc, char* argv[])
@@ -17,9 +18,10 @@ int main(int argc, char* argv[])
             return 0;
         }
 
-        oCommandLineArguments.m_oEncoderArguments.Validate();
+        const EncoderArguments& oEncoderArguments = oCommandLineArguments.m_oEncoderArguments;
+        oEncoderArguments.Validate();
 
-        MDNormalMapEncoder::Encode(oCommandLineArguments.m_oEncoderArguments);
+        ResultWriter::WriteResult(Encoder::Encode(oEncoderArguments), oEncoderArguments);
 
         std::cout << "Finished!\n";
         return 0;

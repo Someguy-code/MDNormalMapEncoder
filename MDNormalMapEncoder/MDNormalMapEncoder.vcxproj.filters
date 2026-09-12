@@ -33,22 +33,22 @@
     <ClCompile Include="CommandLineArguments.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="ImageComponentMerge.ixx">
+    <ClCompile Include="Encoder\ImageComponentMerge.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="ImageSplit.ixx">
+    <ClCompile Include="Encoder\ImageSplit.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="MDNormalMapEncoder.ixx">
+    <ClCompile Include="Encoder\Encoder.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="mian.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="NormalMapPalette.ixx">
+    <ClCompile Include="Encoder\NormalMapPalette.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="PaletteReduction.ixx">
+    <ClCompile Include="Encoder\PaletteReduction.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="BMPHandler\BMPHandler.cpp">
@@ -124,6 +124,12 @@
       <Filter>Archivos de origen\Dithering</Filter>
     </ClCompile>
     <ClCompile Include="Utils\KMeansUtils.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Encoder\EncoderArguments.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Encoder\ResultWriter.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

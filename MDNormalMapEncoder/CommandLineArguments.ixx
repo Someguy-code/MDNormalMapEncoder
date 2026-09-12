@@ -5,12 +5,12 @@ module;
 
 export module CommandLineArguments;
 
-import MDNormalMapEncoder;
+import EncoderArguments;
 import std;
 
 export struct CommandLineArguments
 {
-	MDNormalMapEncoder::Arguments m_oEncoderArguments;
+	EncoderArguments m_oEncoderArguments;
 
 	CommandLineArguments(unsigned int _uArgumentsCount, char* _sArguments[])
 	{
@@ -87,7 +87,15 @@ private:
 
 		void PrintDescription(const char* _sArgumentName) const
 		{
-			std::cout << std::format("  -{}\t{}\n", _sArgumentName, m_sArgumentDescription);
+			std::string sDefaultValue = "";
+			const auto oVisitor = ValueVisitorType{
+				[&sDefaultValue](const char** _pValue) { sDefaultValue = ""; },
+				[&sDefaultValue](unsigned int* _pValue) { sDefaultValue = std::format("Default: {}", *_pValue); },
+				[&sDefaultValue](float* _pValue) { sDefaultValue = std::format("Default: {}", *_pValue); },
+				[&sDefaultValue](ColorRGB* _pValue) { sDefaultValue = std::format("Default: ({}, {}, {})", _pValue->m_uR, _pValue->m_uG, _pValue->m_uB); },
+			};
+			std::visit(oVisitor, m_oValue);
+			std::cout << std::format("  -{}\t{}. {}\n", _sArgumentName, m_sArgumentDescription, sDefaultValue);
 		}
 	};
 

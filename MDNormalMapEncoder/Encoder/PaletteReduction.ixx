@@ -20,7 +20,8 @@ export struct PaletteReduction
 			return oReducedPalette;
 		}
 
-		KMeansUtils<LABColor>::KMeans oKMeans = KMeansUtils<LABColor>::GetKMeans(oUniqueColors, _uWantedPaletteColorsCount, 10, GetColorInMegadrivePalette{});
+		const unsigned int uInitializationsCount = 10;
+		KMeansUtils<LABColor>::KMeans oKMeans = KMeansUtils<LABColor>::GetKMeans(oUniqueColors, _uWantedPaletteColorsCount, uInitializationsCount, GetColorInMegadrivePalette{});
 		std::vector<LABColor>& oReducedPalette = oKMeans.m_oCentroids;
 		oReducedPalette.insert(oReducedPalette.begin(), LABColor{});
 		return oReducedPalette;

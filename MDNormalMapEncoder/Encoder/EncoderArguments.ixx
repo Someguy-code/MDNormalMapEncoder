@@ -1,18 +1,19 @@
 export module EncoderArguments;
 
 import Color;
+import RawImage;
 import std;
 
 export struct EncoderArguments
 {
     //Filename for the mask texture. Black pixel will be marked as transparent.
-    const char* m_sMaskFilename{ nullptr };
+    std::optional<RawImage<ColorRGB>> m_oMask;
     //Filename for the normal map texture
-    const char* m_sNormalFilename{ nullptr };
+    std::optional<RawImage<ColorRGB>> m_oNormal;
     //Filename for the albedo texture
-    const char* m_sAlbedoFilename{ nullptr };
+    std::optional<RawImage<ColorRGB>> m_oAlbedo;
     //Filename for the ambinet occlusion texture. Will be quantized to black and white.
-    const char* m_sAmbinetOcclusionFilename{ nullptr };
+    std::optional<RawImage<ColorRGB>> m_oAmbinetOcclusion;
 
     //Number of directions in the X-Y plane. Must be at least 2.
     unsigned int m_uHorizontalNormalMapSides{ 6 };
@@ -36,25 +37,4 @@ export struct EncoderArguments
     float m_fSpecularHardness{ 1.f };
     //Exponent of the light strength power
     unsigned int m_uSpecularLogShadesCount{ 4 };
-
-    //Prefix filename for the output texture (in case more than one texture need to be generated)
-    const char* m_sBaseOutputFilename{ nullptr };
-    //Filename of the ouput materials file
-    const char* m_sOutputMaterialsFilename{ nullptr };
-
-    void Validate() const
-    {
-        if (m_sBaseOutputFilename == nullptr)
-            throw std::runtime_error("Missing base output texture filename.");
-        if (m_sOutputMaterialsFilename == nullptr && m_sNormalFilename != nullptr)
-            throw std::runtime_error("Missing output materials filename.");
-        if (m_sAlbedoFilename == nullptr && m_sNormalFilename == nullptr)
-            throw std::runtime_error("Neither normal map nor albedo textures specified. Nothing to generate.");
-        if (m_uHorizontalNormalMapSides < 2)
-            throw std::runtime_error("Specified horizontal normal map sides is below 2");
-        if (m_uVerticalNormalMapSides < 2)
-            throw std::runtime_error("Specified vertical normal map sides is below 1");
-        if (m_fSpecularIntensity < 0.f || m_fSpecularIntensity > 1.f)
-            throw std::runtime_error("Specified specular intesity is not in the [0, 1] range");
-    }
 };

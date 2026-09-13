@@ -1,5 +1,6 @@
 import CommandLineArguments;
 import Encoder;
+import EncoderArgumentsBuilder;
 import ResultWriter;
 import std;
 
@@ -18,10 +19,7 @@ int main(int argc, char* argv[])
             return 0;
         }
 
-        const EncoderArguments& oEncoderArguments = oCommandLineArguments.m_oEncoderArguments;
-        oEncoderArguments.Validate();
-
-        ResultWriter::WriteResult(Encoder::Encode(oEncoderArguments), oEncoderArguments);
+        ResultWriter::WriteResult(Encoder::Encode(EncoderArgumentsBuilder::GetEncoderArguments(oCommandLineArguments)), oCommandLineArguments);
 
         std::cout << "Finished!\n";
         return 0;

@@ -1,12 +1,14 @@
 export module ResultWriter;
 
+import BMPHandler;
 import Encoder;
 import ImageSplit;
+import CommandLineArguments;
 import std;
 
 export struct ResultWriter
 {
-    static void WriteResult(const Encoder::Result& _oResult, const EncoderArguments& _oArguments)
+    static void WriteResult(const Encoder::Result& _oResult, const CommandLineArguments& _oArguments)
     {
         WriteImages(_oResult.m_oImagesAndPalettes, _oArguments.m_sBaseOutputFilename);
         if (_oResult.m_oMaterial)

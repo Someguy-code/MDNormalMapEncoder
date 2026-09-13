@@ -129,7 +129,10 @@
     <ClCompile Include="Encoder\EncoderArguments.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Encoder\ResultWriter.ixx">
+    <ClCompile Include="ResultWriter.ixx">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="EncoderArgumentsBuilder.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

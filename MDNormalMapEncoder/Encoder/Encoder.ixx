@@ -1,6 +1,5 @@
 export module Encoder;
 
-import BMPHandler;
 import Color;
 import DitherImage;
 import EncoderArguments;
@@ -28,17 +27,16 @@ export struct Encoder
 
     static Result Encode(const EncoderArguments& _oArguments)
     {
-        std::optional<Dimensions> oRefDimensions;
-        const Optional1BitImage oMask = GetMask(_oArguments, oRefDimensions);
-        const OptionalImageAndPallete oNormalMapAndPallete = GetNormalMap(_oArguments, oMask, oRefDimensions);
-        const OptionalImageAndPallete oAlbedoAndPallete = GetAlbedo(_oArguments, oMask, oRefDimensions);
-        const Optional1BitImage oAmbientOcclusion = GetAmbientOcclusion(_oArguments, oMask, oRefDimensions);
+        const Optional1BitImage oMask = GetMask(_oArguments);
+        const OptionalImageAndPallete oNormalMapAndPallete = GetNormalMap(_oArguments, oMask);
+        const OptionalImageAndPallete oAlbedoAndPallete = GetAlbedo(_oArguments, oMask);
+        const Optional1BitImage oAmbientOcclusion = GetAmbientOcclusion(_oArguments, oMask);
         
         std::optional<Material> oMaterial;
         if(oNormalMapAndPallete)
-            oMaterial = GetMaterial(_oArguments.m_sOutputMaterialsFilename, oNormalMapAndPallete, oAlbedoAndPallete, oAmbientOcclusion, _oArguments);
+            oMaterial = GetMaterial(oNormalMapAndPallete, oAlbedoAndPallete, oAmbientOcclusion, _oArguments);
         return {
-            GetEncodedImage(_oArguments.m_sBaseOutputFilename, oNormalMapAndPallete, oAlbedoAndPallete, oAmbientOcclusion),
+            GetEncodedImage(oNormalMapAndPallete, oAlbedoAndPallete, oAmbientOcclusion),
             std::move(oMaterial)
         };
     }
@@ -47,66 +45,11 @@ private:
 
     using OptionalImageAndPallete = std::optional<std::pair<RawImage<std::uint8_t>, std::vector<ColorRGB>>>;
     using Optional1BitImage = std::optional<RawImage<bool>>;
-    struct Dimensions
+
+    static Optional1BitImage GetMask(const EncoderArguments& _oArguments)
     {
-        unsigned int m_uWidth;
-        unsigned int m_uHeight;
-    };
-
-    static bool ValidateImageDimensions(const BMPHandler& _oImage, std::optional<Dimensions>& _oRefDimensions)
-    {
-        if (!_oRefDimensions.has_value())
-        {
-            _oRefDimensions = {
-                .m_uWidth = _oImage.GetWidth(),
-                .m_uHeight = _oImage.GetHeight()
-            };
-        }
-        else if (_oRefDimensions.value().m_uWidth != _oImage.GetWidth() || _oRefDimensions.value().m_uHeight != _oImage.GetHeight())
-            throw std::runtime_error("Dimensions missmatch (all input images must have matching dimensions)");
-
-        return true;
-    };
-
-    static RawImage<ColorRGB> GetInputImage(const char* _sFilename, std::optional<Dimensions>& _oDimensions)
-    {
-        const BMPHandler oSourceBMP(_sFilename);
-        ValidateImageDimensions(oSourceBMP, _oDimensions);
-        const unsigned int uWidth = oSourceBMP.GetWidth();
-        const unsigned int uHeight = oSourceBMP.GetHeight();
-        std::vector<ColorRGB> oPixelsArray(uWidth * uHeight);
-        ColorRGB* pPixelColors = oPixelsArray.data();
-        for (unsigned int uY = 0; uY < uHeight; ++uY)
-        {
-            for (unsigned int uX = 0; uX < uWidth; ++uX)
-                *pPixelColors++ = oSourceBMP[uY, uX];
-        }
-
-        return { uWidth , uHeight, oPixelsArray };
-    }
-
-    static Optional1BitImage GetMask(const EncoderArguments& _oArguments, std::optional<Dimensions>& _oDimensions)
-    {
-        RawImage<ColorRGB> oSourceMask;
-        const char* sInputMaskFilename = _oArguments.m_sMaskFilename;
-        bool bHasMask = sInputMaskFilename != nullptr;
-        if (bHasMask)
-        {
-            try
-            {
-                std::cout << "Reading mask " << sInputMaskFilename << "\n";
-                oSourceMask = GetInputImage(sInputMaskFilename, _oDimensions);
-            }
-            catch (const std::runtime_error& oException)
-            {
-                throw std::runtime_error(std::format("Exception reading {}: {}", sInputMaskFilename, oException.what()));
-            }
-            catch (...)
-            {
-                throw std::runtime_error(std::format("Unhandled exception reading {}", sInputMaskFilename));
-            }
-        }
-        else
+        const std::optional<RawImage<ColorRGB>>& oInputMask = _oArguments.m_oMask;
+        if (!oInputMask)
             return std::nullopt;
 
         struct ConvertToFlags
@@ -115,33 +58,15 @@ private:
         };
 
         RawImage<bool> oSourceMaskFlags;
-        oSourceMaskFlags = oSourceMask.GetTypeConversion<bool, ConvertToFlags>();
+        oSourceMaskFlags = oInputMask->GetTypeConversion<bool, ConvertToFlags>();
 
         return oSourceMaskFlags;
     }
 
-    static OptionalImageAndPallete GetNormalMap(const EncoderArguments& _oArguments, const std::optional<RawImage<bool>>& _oMask, std::optional<Dimensions>& _oDimensions)
+    static OptionalImageAndPallete GetNormalMap(const EncoderArguments& _oArguments, const std::optional<RawImage<bool>>& _oMask)
     {
-        RawImage<ColorRGB> oSourceNormalMap;
-        const char* sInputNormalMapFilename = _oArguments.m_sNormalFilename;
-        bool bHasNormalMap = sInputNormalMapFilename != nullptr;
-        if (bHasNormalMap)
-        {
-            try
-            {
-                std::cout << "Reading normal map " << sInputNormalMapFilename << "\n";
-                oSourceNormalMap = GetInputImage(sInputNormalMapFilename, _oDimensions);
-            }
-            catch (const std::runtime_error& oException)
-            {
-                throw std::runtime_error(std::format("Exception reading {}: {}", sInputNormalMapFilename, oException.what()));
-            }
-            catch (...)
-            {
-                throw std::runtime_error(std::format("Unhandled exception reading {}", sInputNormalMapFilename));
-            }
-        }
-        else
+        const std::optional<RawImage<ColorRGB>>& oInputNormal = _oArguments.m_oNormal;
+        if(!oInputNormal)
             return std::nullopt;
 
         RawImage<std::uint8_t> oDitheredTargetNormalMap;
@@ -155,81 +80,37 @@ private:
         for (const Vector3& oNormal : oNormalsPalette)
             oNormalMapPalette.push_back(NormalMapUtils::GetColorFromNormal(oNormal));
 
-        RawImage<Vector3> oSourceNormalMapNormals = NormalMapUtils::GetNormalMapNormals(oSourceNormalMap);
+        RawImage<Vector3> oSourceNormalMapNormals = NormalMapUtils::GetNormalMapNormals(*oInputNormal);
         oDitheredTargetNormalMap = DitheredImage<NormalMapError, Vector3>::GetDitheredImage(oSourceNormalMapNormals, oNormalsPalette, false, _oMask);
 
         return { { oDitheredTargetNormalMap, oNormalMapPalette } };
     }
 
-    static OptionalImageAndPallete GetAlbedo(const EncoderArguments& _oArguments, const Optional1BitImage& _oMask, std::optional<Dimensions>& _oDimensions)
+    static OptionalImageAndPallete GetAlbedo(const EncoderArguments& _oArguments, const Optional1BitImage& _oMask)
     {
-        RawImage<ColorRGB> oSourceAlbedo;
-        const char* sInputAlbedoFilename = _oArguments.m_sAlbedoFilename;
-        bool bHasAlbedo = sInputAlbedoFilename != nullptr;
-        if (bHasAlbedo)
-        {
-            try
-            {
-                std::cout << "Reading albedo " << sInputAlbedoFilename << "\n";
-                oSourceAlbedo = GetInputImage(sInputAlbedoFilename, _oDimensions);
-            }
-            catch (const std::runtime_error& oException)
-            {
-                throw std::runtime_error(std::format("Exception reading {}: {}", sInputAlbedoFilename, oException.what()));
-            }
-            catch (...)
-            {
-                throw std::runtime_error(std::format("Unhandled exception reading {}", sInputAlbedoFilename));
-            }
-        }
-        else
+        const std::optional<RawImage<ColorRGB>>& oInputAlbedo = _oArguments.m_oAlbedo;
+        if(!oInputAlbedo)
             return std::nullopt;
 
+        const RawImage<LABColor> oSourceAlbeldoLAB = oInputAlbedo->GetTypeConversion<LABColor>();
+        const std::vector<LABColor> oAlbedoPaletteLAB = PaletteReduction::GetReducedPalette(oSourceAlbeldoLAB, _oMask, _oArguments.m_uMaxAlbedoColors);
+        RawImage<std::uint8_t> oDitheredAlbedo = DitheredImage<LABColorError, LABColor>::GetDitheredImage(oSourceAlbeldoLAB, oAlbedoPaletteLAB, false, _oMask);
         std::vector<ColorRGB> oAlbedoPalette;
-        RawImage<std::uint8_t> oDitheredAlbedo;
-        if (bHasAlbedo)
-        {
-            const RawImage<LABColor> oSourceAlbeldoLAB = oSourceAlbedo.GetTypeConversion<LABColor>();
-            const std::vector<LABColor> oAlbedoPaletteLAB = PaletteReduction::GetReducedPalette(oSourceAlbeldoLAB, _oMask, _oArguments.m_uMaxAlbedoColors);
-            oDitheredAlbedo = DitheredImage<LABColorError, LABColor>::GetDitheredImage(oSourceAlbeldoLAB, oAlbedoPaletteLAB, false, _oMask);
-            oAlbedoPalette.reserve(oAlbedoPaletteLAB.size());
-            for (const LABColor& oLABColor : oAlbedoPaletteLAB)
-                oAlbedoPalette.push_back(static_cast<ColorRGB>(oLABColor));
-        }
+        oAlbedoPalette.reserve(oAlbedoPaletteLAB.size());
+        for (const LABColor& oLABColor : oAlbedoPaletteLAB)
+            oAlbedoPalette.push_back(static_cast<ColorRGB>(oLABColor));
 
         return { {oDitheredAlbedo, oAlbedoPalette} };
     }
 
-    static Optional1BitImage GetAmbientOcclusion(const EncoderArguments& _oArguments, const Optional1BitImage& _oMask, std::optional<Dimensions>& _oDimensions)
+    static Optional1BitImage GetAmbientOcclusion(const EncoderArguments& _oArguments, const Optional1BitImage& _oMask)
     {
-        RawImage<ColorRGB> oSourceAmbientOcclusion;
-        const char* sInputAmbientOcclusionFilename = _oArguments.m_sAmbinetOcclusionFilename;
-        bool bHasAmbientOcclusion = sInputAmbientOcclusionFilename != nullptr;
-        if (bHasAmbientOcclusion)
-        {
-            try
-            {
-                std::cout << "Reading ambient occlusion " << sInputAmbientOcclusionFilename << "\n";
-                oSourceAmbientOcclusion = GetInputImage(sInputAmbientOcclusionFilename, _oDimensions);
-            }
-            catch (const std::runtime_error& oException)
-            {
-                throw std::runtime_error(std::format("Exception reading {}: {}", sInputAmbientOcclusionFilename, oException.what()));
-            }
-            catch (...)
-            {
-                throw std::runtime_error(std::format("Unhandled exception reading {}", sInputAmbientOcclusionFilename));
-            }
-        }
-        else
+        const std::optional<RawImage<ColorRGB>>& oInputAmbientOcclusion = _oArguments.m_oAmbinetOcclusion;
+        if(!oInputAmbientOcclusion)
             return std::nullopt;
 
-        RawImage<std::uint8_t> oDitheredAmbientOcclusion;
-        if (bHasAmbientOcclusion)
-        {
-            const RawImage<LABColor> oSourceAlbeldoLAB = oSourceAmbientOcclusion.GetTypeConversion<LABColor>();
-            oDitheredAmbientOcclusion = DitheredImage<LABColorError, LABColor>::GetDitheredImage(oSourceAlbeldoLAB, std::vector<LABColor>{ColorRGB{ 0, 0, 0 }, ColorRGB{ 255, 255, 255 }}, true, _oMask);
-        }
+        const RawImage<LABColor> oInputAmbientOcclusionLAB = oInputAmbientOcclusion->GetTypeConversion<LABColor>();
+        RawImage<std::uint8_t> oDitheredAmbientOcclusion = DitheredImage<LABColorError, LABColor>::GetDitheredImage(oInputAmbientOcclusionLAB, std::vector<LABColor>{ColorRGB{ 0, 0, 0 }, ColorRGB{ 255, 255, 255 }}, true, _oMask);
 
         struct ConvertToFlags
         {
@@ -239,13 +120,13 @@ private:
         return { oDitheredAmbientOcclusion.GetTypeConversion<bool, ConvertToFlags>() };
     }
 
-    static std::vector<ImageSplit::ImageAndPalette> GetEncodedImage(const char* _sBaseOutputFilename, const OptionalImageAndPallete& _oNormalMapAndPallete, const OptionalImageAndPallete& _oAlbedoAndPallete, const Optional1BitImage& _oAmbientOcclusion)
+    static std::vector<ImageSplit::ImageAndPalette> GetEncodedImage(const OptionalImageAndPallete& _oNormalMapAndPallete, const OptionalImageAndPallete& _oAlbedoAndPallete, const Optional1BitImage& _oAmbientOcclusion)
     {
         const auto& [oMergedImage, oMergedPalette] = ImageComponentMerge::GetMergedResult(_oNormalMapAndPallete, _oAlbedoAndPallete, _oAmbientOcclusion);
         return ImageSplit::GetSplitImageAndPalette(oMergedImage, oMergedPalette);
     }
 
-    static Material GetMaterial(const char* _sOutputMaterialsFilename, const OptionalImageAndPallete& _oNormalMapAndPallete, const OptionalImageAndPallete& _oAlbedoAndPallete, const Optional1BitImage& oAmbientOcclusion, const EncoderArguments& _oArguments)
+    static Material GetMaterial(const OptionalImageAndPallete& _oNormalMapAndPallete, const OptionalImageAndPallete& _oAlbedoAndPallete, const Optional1BitImage& oAmbientOcclusion, const EncoderArguments& _oArguments)
     {
         //If no albedo was provided, default to pure white
         const std::vector<ColorRGB> oDefaultAlbedo = { {255, 255, 255} };

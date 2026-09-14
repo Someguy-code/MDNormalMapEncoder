@@ -134,7 +134,7 @@ private:
         const float fSpecularIntensity = _oArguments.m_fSpecularIntensity;
         return { 1, oAmbientOcclusion.has_value(),
             _oAlbedoAndPallete.has_value() ? std::span{_oAlbedoAndPallete->second}.subspan(1) : oDefaultAlbedo,
-            std::span{_oNormalMapAndPallete->second}.subspan(1), _oArguments.m_oFrontLightColor, _oArguments.m_oBackLightColor, _oArguments.m_oPureDarknessColor, uLogLightShadesCount,
+            std::span{_oNormalMapAndPallete->second}.subspan(1), _oArguments.m_oFrontLightColor, _oArguments.m_oPureDarknessColor, _oArguments.m_oBackLightColor, uLogLightShadesCount,
             fSpecularIntensity > 0.f ? std::optional{SpecularData{_oArguments.m_fSpecularHardness, fSpecularIntensity, uLogLightShadesCount, uLogLightShadesCount}} : std::nullopt };
     }
 };

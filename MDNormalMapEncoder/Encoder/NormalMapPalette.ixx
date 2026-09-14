@@ -28,8 +28,7 @@ export struct NormalMapPalette
         {
             for (unsigned int uVerticalSideIndex = 0; uVerticalSideIndex < _uVerticalSidesCount - 1; ++uVerticalSideIndex)
             {
-                const float fVerticalAlpha = (float)(uVerticalSideIndex + 1) / (float)_uVerticalSidesCount;
-                const float fVerticalCos = static_cast<float>(std::cos(fVerticalAlpha * M_PI_2));
+                const float fVerticalCos = static_cast<float>(std::cos(GetVerticalAngle(uVerticalSideIndex, _uVerticalSidesCount)));
                 oNormalsPalette.emplace_back( fNormalX * fVerticalCos, fNormalY * fVerticalCos, -oVerticalSideHeights[uVerticalSideIndex] );
             }
         }
@@ -44,10 +43,7 @@ private:
         //The last side is looking straight up. Unlike all the other normals, this one is unique so no need to store multiple copies
         std::vector<float> oVerticalSidesHeights(_uVerticalSidesCount - 1);
         for (unsigned int uVerticalSideIndex = 0; uVerticalSideIndex < _uVerticalSidesCount - 1; ++uVerticalSideIndex)
-        {
-            const float fAlpha = (float)(uVerticalSideIndex + 1) / (float)_uVerticalSidesCount;
-            oVerticalSidesHeights[uVerticalSideIndex] = static_cast<float>(std::sin(fAlpha * M_PI_2));
-        }
+            oVerticalSidesHeights[uVerticalSideIndex] = static_cast<float>(std::sin(GetVerticalAngle(uVerticalSideIndex, _uVerticalSidesCount)));
         return oVerticalSidesHeights;
     }
 
@@ -66,5 +62,13 @@ private:
             oNormal.second = fNormalY;
         }
         return oHorizontalSidesNormals;
+    }
+
+    static float GetVerticalAngle(unsigned int _uSideIndex, unsigned int _uSideCount)
+    {
+        //Divide the whole hemisphere in 2 * _uSideCount - 1 (the straight up direction will be handled separately) parts.
+        //Take the direction on the center of each.
+        const float fAlpha = (static_cast<float>(_uSideIndex) + 0.5f) / (float)(2 * _uSideCount - 1);
+        return fAlpha * static_cast<float>(M_PI);
     }
 };

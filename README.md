@@ -60,6 +60,7 @@ This tool is able to automatically quantize the input images to a specific numbr
 Normal map colors are interpreted as normalized directions of an hemispehere.
 The user can define a reduced palette by specifying the number of horizontal and vertical divisions of this hemispfere.
 Each normal map direction is matched with the closest one in the palette, using the angular distance of the vectors for the comparison.
+![Normals palette samples](ReadmeResources/NormalsPalette.png)
 
 ### Albedo
 
@@ -92,6 +93,9 @@ This is a command-line utility. It supports the following arguments (all percede
 **NOTE:** All colors in quotes, 3 8-bit RGB separated by commas.
 
 Example: MDNormalMapEncoder -im "torus_mask.bmp" -in "torus_normal.bmp" -ia "torus_albedo.bmp" -ot "torus_out.bmp" -om "torus_out.mat" -nhs 6 -nvs 3 -amc 2
+
+## Tech Stack
+* Visual Studio 2026
 
 ## TODO
 

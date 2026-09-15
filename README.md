@@ -123,4 +123,4 @@ Example: MDNormalMapEncoder -im "torus_mask.bmp" -in "torus_normal.bmp" -ia "tor
 This tool was inspired by [Dither it!](https://ditherit.com) by Alex Harris.
 This readme uses the following images:
 * [**Girl with a Pearl Earring (by Johannes Vermeer)**](https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring)
-* [**Ambient Occlusion - 8Bit TIFF - Seamless**]([https://www.textures.com/download/free-3d-scanned-stone-wall-2x2-3x3-4x4-meters/133264)
+* [**Ambient Occlusion - 8Bit TIFF - Seamless**](https://www.textures.com/download/free-3d-scanned-stone-wall-2x2-3x3-4x4-meters/133264)

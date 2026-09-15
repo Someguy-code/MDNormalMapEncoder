@@ -79,6 +79,9 @@ The ambient occlusion image is quantized to a 1bpp image.
 ![Quantized AO samples](ReadmeResources/QuantizedAO.png)
 
 The dark pixel will remain always as such, unaffected by lighting.
+Ambient occlussion may have a subtle effect, but depeding on the light direction it can help keep some features visible:
+
+![AO comparison](ReadmeResources/AOComparison.png)
 
 ## Usage
 
@@ -118,3 +121,6 @@ Example: MDNormalMapEncoder -im "torus_mask.bmp" -in "torus_normal.bmp" -ia "tor
 ## Special thanks
 
 This tool was inspired by [Dither it!](https://ditherit.com) by Alex Harris.
+This readme uses the following images:
+* [**Girl with a Pearl Earring (by Johannes Vermeer)**](https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring)
+* [**Ambient Occlusion - 8Bit TIFF - Seamless**]([https://www.textures.com/download/free-3d-scanned-stone-wall-2x2-3x3-4x4-meters/133264)

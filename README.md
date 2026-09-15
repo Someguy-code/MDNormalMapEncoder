@@ -58,13 +58,19 @@ This tool is able to automatically quantize the input images to a specific numbr
 ### Normal map
 
 Normal map colors are interpreted as normalized directions of an hemispehere.
-The user can define a reduced palette by specifying the number of horizontal and vertical divisions of this hemispfere.
-Each normal map direction is matched with the closest one in the palette, using the angular distance of the vectors for the comparison.
+The user can define a reduced palette by specifying a number of horizontal and vertical divisions of this hemisphere. For each of the resulting sections, the direction passing through their center is picked. Check this image for some examples of the resulting palettes:
+
 ![Normals palette samples](ReadmeResources/NormalsPalette.png)
+
+Each normal map direction is matched with the closest one in the palette, using the angular distance of the vectors for the comparison.
 
 ### Albedo
 
-The user can specify a maximum number of colors. The k-means algorithm is used to obtain a palette with up to the specified number of colors.
+The user can specify a maximum number of colors. The k-means algorithm is used to obtain a palette with up to the specified number of colors. More specifically, the Forgy method is used to obtain an initial palette and then uses Lloyd's algorithm to refine it. Since the initial palette has a big impact on the result, the operation is repeated 10 times and the best result (taking into account the conversion to Megadrive's 9-bit master palette) is picked . Check this image for some examples of the results:
+
+![Albedo palette samples](ReadmeResources/AlbedoPalette.png)
+
+Due to the way colors are grouped and the conversion to the limited Megadrive palette, it is possible you need to specify a higher number of colors than needed in order to obtain the desired number. Unfortuantely, this can only be acheived through manual iteration.
 
 ### Ambient occlusion
 

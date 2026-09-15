@@ -1,8 +1,8 @@
 # Normal map encoder for the Sega Megadrive / Genesis
 
-Utility to encode normals maps in a format usable by the Sega Megadrive / Genesis. It can combine the information from several input images into one or more 4-bit images + a material file. The resulting images can be loaded directly into the Megadrive VRAM and displayed as sprites or scroll planes. They do not need to be modified to apply lighting to them. Instead, the material files describe the lighting data associated with every color in the image. Modifying the palette entries assined to them is enough to change the image lighting.
+Utility to encode normals maps in a format usable by the Sega Megadrive / Genesis. It can combine the information from several input images into one or more 4-bit images + a material file. The resulting images can be loaded directly into the Megadrive VRAM and displayed as sprites or scroll planes. They do not need to be modified to apply lighting to them. Instead, the material files describe the lighting data associated with every color in the image. Modifying the palette entries assigned to them is enough to change the image lighting.
 
-To check the Megadrive-side implementation, please check [this tech-demo](https://github.com/Someguy-code/MDNormalMapTest)
+For the Megadrive-side implementation, please check [this tech-demo](https://github.com/Someguy-code/MDNormalMapTest)
 
 ## MAT file format
 

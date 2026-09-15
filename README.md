@@ -70,11 +70,15 @@ The user can specify a maximum number of colors. The k-means algorithm is used t
 
 ![Albedo palette samples](ReadmeResources/AlbedoPalette.png)
 
-Due to the way colors are grouped and the conversion to the limited Megadrive palette, it is possible you need to specify a higher number of colors than needed in order to obtain the desired number. Unfortuantely, this can only be acheived through manual iteration.
+Due to the way colors are grouped and the conversion to the limited Megadrive palette, it is possible you need to specify a higher number of colors than needed in order to obtain the desired number. Unfortuantely, this can only be achieved through manual iteration.
 
 ### Ambient occlusion
 
-The ambient occlusion image is quantized to a 1bpp image. The dark pixel will remain always as such, unaffected by lighting.
+The ambient occlusion image is quantized to a 1bpp image. 
+
+![Quantized AO samples](ReadmeResources/QuantizedAO.png)
+
+The dark pixel will remain always as such, unaffected by lighting.
 
 ## Usage
 

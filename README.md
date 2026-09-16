@@ -43,6 +43,10 @@ The data generated with this tool supports the following features:
 * Albedo.
 * Ambient occlusion.
 
+## Masking
+
+It's possible to specify a mask as a black & white BMP file. Parts of the rest of the input images overlapping white pixels will be processed as normal. Parts overlapping black pixels will still propagate errors during the dithering process, but they will be set to color 0 (transparent) in the final result. These masked areas will also be ignored during the quantized albedo palette generation.
+
 ## Color conversion
 
 The Megadrive uses a custom 3-bit per component master palette. There are some discrepancies about the specific equivalent RGB values, but this tool uses the Blastem emulator criterion. Thus, these are the possible values for each component: 0, 49, 87, 119, 146, 174, 206, 255.

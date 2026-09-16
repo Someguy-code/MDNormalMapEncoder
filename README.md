@@ -109,7 +109,7 @@ This is a command-line utility. It supports the following arguments (all percede
 
 **NOTE:** All colors in quotes, 3 8-bit RGB separated by commas.
 
-Example: MDNormalMapEncoder -im "torus_mask.bmp" -in "torus_normal.bmp" -ia "torus_albedo.bmp" -ot "torus_out.bmp" -om "torus_out.mat" -nhs 6 -nvs 3 -amc 2
+**Example:** MDNormalMapEncoder -im "torus_mask.bmp" -in "torus_normal.bmp" -ia "torus_albedo.bmp" -ot "torus_out.bmp" -om "torus_out.mat" -nhs 6 -nvs 3 -amc 2
 
 ## Tech Stack
 * Visual Studio 2026
@@ -125,6 +125,7 @@ Example: MDNormalMapEncoder -im "torus_mask.bmp" -in "torus_normal.bmp" -ia "tor
 ## Special thanks
 
 This tool was inspired by [Dither it!](https://ditherit.com) by Alex Harris.
+
 This readme uses the following images:
 * [**Girl with a Pearl Earring (by Johannes Vermeer)**](https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring)
 * [**Ambient Occlusion - 8Bit TIFF - Seamless**](https://www.textures.com/download/free-3d-scanned-stone-wall-2x2-3x3-4x4-meters/133264)

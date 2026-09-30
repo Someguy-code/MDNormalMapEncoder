@@ -28,6 +28,9 @@
     <Filter Include="Archivos de origen\Utils">
       <UniqueIdentifier>{f42ce6a7-5ef2-4fe2-a994-91d2d48bc436}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de origen\Containers">
+      <UniqueIdentifier>{18151f2f-059b-4b3a-bb18-36d4c2783602}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandLineArguments.ixx">
@@ -134,6 +137,9 @@
     </ClCompile>
     <ClCompile Include="EncoderArgumentsBuilder.ixx">
       <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="MPMCQueue.ixx">
+      <Filter>Archivos de origen\Containers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

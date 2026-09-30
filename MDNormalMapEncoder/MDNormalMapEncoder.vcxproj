@@ -154,6 +154,7 @@
     <ClCompile Include="Encoder\EncoderArguments.ixx" />
     <ClCompile Include="Encoder\ImageComponentMerge.ixx" />
     <ClCompile Include="Encoder\ImageSplit.ixx" />
+    <ClCompile Include="MPMCQueue.ixx" />
     <ClCompile Include="ResultWriter.ixx" />
     <ClCompile Include="Material\DiffuseComponent.ixx" />
     <ClCompile Include="Material\Material.ixx" />

@@ -1,3 +1,6 @@
+module;
+#include <cassert>
+
 export module MPMCQueue;
 
 import std;
@@ -16,12 +19,13 @@ class MPMCQueue
 			return std::launder(reinterpret_cast<T*>(m_oValue));
 		}
 
-		static void SetQueued(size_t _uSequenceNumber)
+		template<bool bNeedsSynchronizartion = true>
+		void SetQueued(size_t _uSequenceNumber)
 		{
-			m_uSequenceNumber.store(_uSequenceNumber + 1, std::memory_order_release);
+			m_uSequenceNumber.store(_uSequenceNumber + 1, bNeedsSynchronizartion ? std::memory_order_release : std::memory_order_relaxed);
 		}
 
-		static void SetDequeued(size_t _uSequenceNumber)
+		void SetDequeued(size_t _uSequenceNumber)
 		{
 			m_uSequenceNumber.store(_uSequenceNumber + N, std::memory_order_release);
 		}
@@ -30,6 +34,13 @@ class MPMCQueue
 		void Initialize(size_t _uSequenceNumber)
 		{
 			m_uSequenceNumber.store(_uSequenceNumber, std::memory_order_relaxed);
+		}
+
+		template<typename... Arguments>
+		void Initialize(size_t _uSequenceNumber, Arguments&&... _oArguments) noexcept
+		{
+			new (GetValue()) T(std::forward<Arguments>(_oArguments)...);
+			SetQueued<false>(_uSequenceNumber);
 		}
 
 		size_t GetSequenceNumber(std::memory_order _oMermoryOrder) const
@@ -104,13 +115,28 @@ class MPMCQueue
 public:
 	MPMCQueue()
 	{
-		for(size_t uNodeIndex: std::iota(0, N + 1))
+		for(size_t uNodeIndex: std::views::iota(static_cast<size_t>(0), N))
 			m_oNodesRing[uNodeIndex].Initialize(uNodeIndex);
+	}
+
+	//Initialize the queue with a range of initial values. Will throw if the range has more than N elements.
+	MPMCQueue(std::ranges::input_range auto&& _oInitialValuesRange)
+		: MPMCQueue()
+	{
+		size_t uNodeIndex = 0;
+		for (T&& oElement : _oInitialValuesRange)
+		{
+			assert(uNodeIndex < N);
+			//m_oNodesRing[uNodeIndex++].Initialize(uNodeIndex, std::forward<T>(oElement));
+			(void)Emplace(std::forward<T>(oElement));
+			++uNodeIndex;
+		}
+		//m_uTailIndex.store(uNodeIndex);
 	}
 
 	~MPMCQueue()
 	{
-		for (size_t uNodeIndex : std::string_view::iota(
+		for (size_t uNodeIndex : std::views::iota(
 			m_uHeadIndex.load(std::memory_order_relaxed),
 			m_uTailIndex.load(std::memory_order_relaxed) + 1))
 		{
@@ -138,7 +164,7 @@ public:
 				bSuccess = false;
 			else if (IsNodeQueued(uTailIndex, uNodeSequence))
 				uTailIndex = m_uTailIndex.load(std::memory_order_relaxed);
-			else if (TryIncreaseWriteIndex(uTailIndex))
+			else if (TryAcquireNode(uTailIndex))
 			{
 				oNode.Emplace(uTailIndex, std::forward<Arguments>(_oArguments)...);
 				bSuccess = true;

@@ -19,9 +19,11 @@ int main(int argc, char* argv[])
             return 0;
         }
 
+        const std::chrono::time_point<std::chrono::high_resolution_clock> oTimeStart = std::chrono::high_resolution_clock::now();
         ResultWriter::WriteResult(Encoder::Encode(EncoderArgumentsBuilder::GetEncoderArguments(oCommandLineArguments)), oCommandLineArguments);
-
-        std::cout << "Finished!\n";
+        const std::chrono::time_point<std::chrono::high_resolution_clock> oTimeEnd = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<float> oDuration = oTimeEnd - oTimeStart;
+        std::cout << "Finished (" << oDuration.count() << " s)!\n";
         return 0;
     }
     catch (const std::runtime_error& oException)

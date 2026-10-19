@@ -126,9 +126,6 @@
     <ClCompile Include="Dithering\ErrorTypeInterface.ixx">
       <Filter>Archivos de origen\Dithering</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\KMeansUtils.ixx">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="Encoder\EncoderArguments.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
@@ -140,6 +137,12 @@
     </ClCompile>
     <ClCompile Include="MPMCQueue.ixx">
       <Filter>Archivos de origen\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\KMeansUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\MultithreadUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@ import LABColor;
 import KMeansUtils;
 import MathUtils;
 import MegadriveUtils;
+import MultithreadUtils;
 import RawImage;
 import std;
 
@@ -20,8 +21,9 @@ export struct PaletteReduction
 			return oReducedPalette;
 		}
 
-		const unsigned int uInitializationsCount = 10;
-		KMeansUtils<LABColor>::KMeans oKMeans = KMeansUtils<LABColor>::GetKMeans(oUniqueColors, _uWantedPaletteColorsCount, uInitializationsCount, GetColorInMegadrivePalette{});
+		const size_t uInitializationsCount = 10;
+		const size_t uMaxThreads = MultithreadUtils::GetMaxConcurrentThreadsCount();
+		KMeansUtils<LABColor>::KMeans oKMeans = KMeansUtils<LABColor>::GetKMeans(oUniqueColors, _uWantedPaletteColorsCount, uInitializationsCount, uMaxThreads, GetColorInMegadrivePalette{});
 		std::vector<LABColor>& oReducedPalette = oKMeans.m_oCentroids;
 		oReducedPalette.insert(oReducedPalette.begin(), LABColor{});
 		return oReducedPalette;

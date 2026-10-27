@@ -1,3 +1,6 @@
+module;
+#include <immintrin.h>
+
 export module LABColor;
 
 import Color;
@@ -6,7 +9,7 @@ import MathUtils;
 import std;
 import Vector3;
 
-export struct LABColor
+export struct alignas(16) LABColor
 {
 	//Perceived luminance
 	float m_fL = 0.f;
@@ -14,6 +17,8 @@ export struct LABColor
 	float m_fA = 0.f;
 	//Blue-Yellow balance
 	float m_fB = 0.f;
+	//Dummy float for padding to 16 bytes alignment
+	float m_fDummy = 0.f;
 
 	LABColor() = default;
 	LABColor(float _fL, float _fA, float _fB)
@@ -169,9 +174,79 @@ export struct LABColor
 		return fDeltaL * fDeltaL + fDeltaA * fDeltaA + fDeltaB * fDeltaB;
 	}
 
+	// Returns the smallest square distance between this color and a list of other colors (and the index of the closest element).
+	// All colors must be aligned to 16-bytes
+	float GetSmallestSqrDistanceAligned(std::span<const LABColor> _oOthers, size_t& _uSmallestSqrDistanceIndex) const
+	{
+		const __m128 oSelf = _mm_load_ps(std::assume_aligned<16>(&m_fL));
+		const float* oOthersComponents = std::assume_aligned<16>(&_oOthers[0].m_fL);
+
+		_uSmallestSqrDistanceIndex = 0;
+		float fSmallestSqrDistance = std::numeric_limits<float>::infinity();
+
+		const size_t uCount = _oOthers.size();
+		const size_t uGroupsOf4Count = uCount / 4;
+		for (size_t uGroupIndex = 0; uGroupIndex < uGroupsOf4Count; ++uGroupIndex)
+		{
+			const size_t uBaseOtherIndex = uGroupIndex * 4;
+			ComputeSmallestSqrDistance<4>(oSelf, &oOthersComponents[uBaseOtherIndex * 4], uBaseOtherIndex, fSmallestSqrDistance, _uSmallestSqrDistanceIndex);
+		}
+
+		const size_t uGroupsOf2Count = (uCount % 4) / 2;
+		if (uGroupsOf2Count > 0)
+		{
+			const size_t uBaseOtherIndex = uGroupsOf4Count * 4;
+			ComputeSmallestSqrDistance<2>(oSelf, &oOthersComponents[uBaseOtherIndex * 4], uBaseOtherIndex, fSmallestSqrDistance, _uSmallestSqrDistanceIndex);
+		}
+
+		if(uCount % 2 == 1)
+		{
+			const float fSqrDistance = GetSqrDistance(_oOthers[uCount - 1]);
+
+			if (fSqrDistance < fSmallestSqrDistance)
+			{
+				fSmallestSqrDistance = fSqrDistance;
+				_uSmallestSqrDistanceIndex = uCount - 1;
+			}
+		}
+
+		return fSmallestSqrDistance;
+	}
+
 	float GetDistance(const LABColor& _oOther) const
 	{
 		return std::sqrt(GetSqrDistance(_oOther));
+	}
+
+private:
+	template<size_t N>
+	static void ComputeSmallestSqrDistance(const __m128& _oSelf, const float* _oOthersComponents, size_t _uBaseIndex, float& _fSmallestSqrDistance, size_t& _uSmallestSqrDistanceIndex)
+	{
+		std::array<__m128, N> oDeltaSrqs;
+		// Delta = Self - Other
+		for (size_t uResultIndex = 0; uResultIndex < N; ++uResultIndex)
+			oDeltaSrqs[uResultIndex] = _mm_sub_ps(_oSelf, _mm_load_ps(&_oOthersComponents[uResultIndex * 4]));
+		// DeltaSqr = Delta * Delta
+		for (size_t uResultIndex = 0; uResultIndex < N; ++uResultIndex)
+			oDeltaSrqs[uResultIndex] = _mm_mul_ps(oDeltaSrqs[uResultIndex], oDeltaSrqs[uResultIndex]);
+		std::array<__m128, N> oSqrDistances;
+		// SqrDistance = DeltaSqr[0]  + DeltaSqr[1]
+		for (size_t uResultIndex = 0; uResultIndex < N; ++uResultIndex)
+			oSqrDistances[uResultIndex] = _mm_add_ss(oDeltaSrqs[uResultIndex], _mm_shuffle_ps(oDeltaSrqs[uResultIndex], oDeltaSrqs[uResultIndex], _MM_SHUFFLE(2, 2, 2, 1)));
+		// SrqDistance += DeltaSqr[2]
+		for (size_t uResultIndex = 0; uResultIndex < N; ++uResultIndex)
+			oSqrDistances[uResultIndex] = _mm_add_ss(oSqrDistances[uResultIndex], _mm_shuffle_ps(oDeltaSrqs[uResultIndex], oDeltaSrqs[uResultIndex], _MM_SHUFFLE(2, 2, 2, 2)));
+		std::array<float, N> fSqrDistances;
+		for (size_t uResultIndex = 0; uResultIndex < N; ++uResultIndex)
+			_mm_store_ss(&fSqrDistances[uResultIndex], oSqrDistances[uResultIndex]);
+		for (size_t uResultIndex = 0; uResultIndex < N; ++uResultIndex)
+		{
+			if (fSqrDistances[uResultIndex] < _fSmallestSqrDistance)
+			{
+				_fSmallestSqrDistance = fSqrDistances[uResultIndex];
+				_uSmallestSqrDistanceIndex = _uBaseIndex + uResultIndex;
+			}
+		}
 	}
 };
 

@@ -21,6 +21,12 @@ concept HasGetSqrDistance = requires (const T Value1, const T & Value2)
 	{ Value1.GetSqrDistance(Value2) } -> std::same_as<float>;
 };
 
+export template <typename T>
+concept HasGetSmallestSqrDistanceAligned = requires (const T Reference, std::span<const T> Others, size_t& _uSmallestSqrDistanceIndex)
+{
+	{ Reference.GetSmallestSqrDistanceAligned(Others, _uSmallestSqrDistanceIndex) } -> std::same_as<float>;
+};
+
 export struct CollectionUtils
 {
 	template<std::input_or_output_iterator Iter, typename ValueType> requires

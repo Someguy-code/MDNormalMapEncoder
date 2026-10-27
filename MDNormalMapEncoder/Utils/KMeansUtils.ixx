@@ -1,3 +1,6 @@
+module;
+#include <cassert>
+
 export module KMeansUtils;
 
 import CollectionUtils;
@@ -5,7 +8,7 @@ import MPMCQueue;
 import MultithreadUtils;
 import std;
 
-export template<HasGetSqrDistance T>
+export template<HasGetSmallestSqrDistanceAligned T>
 struct KMeansUtils
 {
 	struct KMeans
@@ -216,21 +219,22 @@ private:
 			[uElementsCount = _oElements.size()](auto& _oGroup) {_oGroup.reserve(uElementsCount);});
 		for (const T& oElement : _oElements)
 		{
-			const auto [uClosestCentroidIndex, uClosestSqrDistance] = GetClosestCentroidIndexAndSqrDistance(oElement, _oCentroids);
+			//const auto [uClosestCentroidIndex2, fClosestSqrDistance2] = GetClosestCentroidIndexAndSqrDistance(oElement, _oCentroids);
+			size_t uClosestCentroidIndex;
+			float fClosestSqrDistance = oElement.GetSmallestSqrDistanceAligned(std::span{ _oCentroids.cbegin(), _oCentroids.size() }, uClosestCentroidIndex);
 			oGroups[uClosestCentroidIndex].emplace_back(oElement);
-			_fSumOfSquareDistances += uClosestSqrDistance;
+			_fSumOfSquareDistances += fClosestSqrDistance;
 		}
 		return oGroups;
 	}
 
-	static std::tuple<size_t, float> GetClosestCentroidIndexAndSqrDistance(const T& _oElement, const std::vector<T>& _oCentroids)
+	/*static std::tuple<size_t, float> GetClosestCentroidIndexAndSqrDistance(const T& _oElement, const std::vector<T>& _oCentroids)
 	{
 		size_t uClosestIndex = 0;
 		float fClosestSqrDistance = std::numeric_limits<float>::infinity();
 		for (size_t uCentroidIndex : std::views::iota(static_cast<size_t>(0), _oCentroids.size()))
 		{
-			const T& oCentroid = _oCentroids[uCentroidIndex];
-			const float fSqrDistance = _oElement.GetSqrDistance(oCentroid);
+			const float fSqrDistance = _oElement.GetSqrDistance(_oCentroids[uCentroidIndex]);
 			if (fSqrDistance < fClosestSqrDistance)
 			{
 				uClosestIndex = uCentroidIndex;
@@ -238,7 +242,7 @@ private:
 			}
 		}
 		return { uClosestIndex , fClosestSqrDistance };
-	}
+	}*/
 
 	static std::vector<T> GetCentroids(const std::vector<std::vector<T>>& _oGroups)
 	{

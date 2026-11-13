@@ -12,6 +12,17 @@ import std;
 
 export struct CommandLineArguments
 {
+	enum class ExecutionMode
+	{
+		Interactive,
+		ShowHelp,
+		CommandLine
+	};
+
+	bool m_bInteactiveMode{ false };
+	//Flag specifying whether to show the help message and exit
+	bool m_bShowHelp{ false };
+
 	//Filename for the mask texture. Black pixel will be marked as transparent.
 	const char* m_sMaskFilename{ nullptr };
 	//Filename for the normal map texture
@@ -51,13 +62,17 @@ export struct CommandLineArguments
 
 	CommandLineArguments(unsigned int _uArgumentsCount, char* _sArguments[])
 	{
-		if (_uArgumentsCount == 0)
+		if (IsInteractiveMode(_uArgumentsCount))
+		{
+			m_bInteactiveMode = true;
 			return;
+		}
 
 		const char* sArgumentValue{ nullptr };
 		const char* sArgumentName{ nullptr };
 
 		const auto oVisitor = ValueVisitorType{
+			[&sArgumentValue](bool* _pValue) { *_pValue = true; },
 			[&sArgumentValue](const char** _pValue) { *_pValue = sArgumentValue; },
 			[&sArgumentName , &sArgumentValue](unsigned int* _pValue) {
 				if (sscanf_s(sArgumentValue, "%d", _pValue) != 1)
@@ -70,7 +85,8 @@ export struct CommandLineArguments
 					throw std::runtime_error(std::format("Unexpected value type for '{}'", sArgumentName));},
 		};
 
-		for (unsigned int uArgumentIndex = 0; uArgumentIndex < _uArgumentsCount; uArgumentIndex += 2)
+		size_t uLastArgumentValuesCount = 0;
+		for (size_t uArgumentIndex = 0; uArgumentIndex < _uArgumentsCount; uArgumentIndex += 1 + uLastArgumentValuesCount)
 		{
 			const char sArgumentPrefix = '-';
 			const char* sArgument = _sArguments[uArgumentIndex];
@@ -81,8 +97,6 @@ export struct CommandLineArguments
 				const auto itArgumentID = m_oArgumentNamesToIDs.find(sArgumentName);
 				if (itArgumentID == m_oArgumentNamesToIDs.cend())
 					throw std::runtime_error(std::format("Unknown parameter '{}'", sArgumentName));
-				else if(uArgumentIndex >= _uArgumentsCount - 1)
-					throw std::runtime_error(std::format("Missing value for '{}'", sArgumentName));
 				else
 				{
 					const auto itArgument = m_oArgumentDefinitions.find(itArgumentID->second);
@@ -90,7 +104,11 @@ export struct CommandLineArguments
 
 					sArgumentValue = _sArguments[uArgumentIndex + 1];
 					const Argument& oArgument = itArgument->second;
-					std::visit(oVisitor, oArgument.m_oValue);
+					uLastArgumentValuesCount = oArgument.GetValueCount();
+					if (uArgumentIndex >= _uArgumentsCount - uLastArgumentValuesCount)
+						throw std::runtime_error(std::format("Missing value for '{}'", sArgumentName));
+					else
+						std::visit(oVisitor, oArgument.m_oValue);
 				}
 			}
 		}
@@ -111,13 +129,26 @@ export struct CommandLineArguments
 		}
 	}
 
+	ExecutionMode GetExecutionMode() const
+	{
+		return m_bInteactiveMode ? ExecutionMode::Interactive :
+			m_bShowHelp ? ExecutionMode::ShowHelp :
+			ExecutionMode::CommandLine;
+	}
+
 private:
+	static constexpr bool IsInteractiveMode(unsigned int _uArgumentsCount)
+	{
+		return _uArgumentsCount == 0;
+	}
+
 	template<class... Ts>
 	struct ValueVisitorType : Ts... { using Ts::operator()...; };
 
 	struct Argument
 	{
 		std::variant<
+			bool*,
 			const char**,
 			unsigned int*,
 			float*,
@@ -128,6 +159,7 @@ private:
 		{
 			std::string sDefaultValue = "";
 			const auto oVisitor = ValueVisitorType{
+				[&sDefaultValue](bool* _pValue) { sDefaultValue = ""; },
 				[&sDefaultValue](const char** _pValue) { sDefaultValue = ""; },
 				[&sDefaultValue](unsigned int* _pValue) { sDefaultValue = std::format("Default: {}", *_pValue); },
 				[&sDefaultValue](float* _pValue) { sDefaultValue = std::format("Default: {}", *_pValue); },
@@ -136,10 +168,23 @@ private:
 			std::visit(oVisitor, m_oValue);
 			std::cout << std::format("  -{}\t{}. {}\n", _sArgumentName, m_sArgumentDescription, sDefaultValue);
 		}
+
+		size_t GetValueCount() const
+		{
+			const auto oVisitor = ValueVisitorType{
+				[](bool* _pValue) { return 0; },
+				[](const char** _pValue) { return 1; },
+				[](unsigned int* _pValue) { return 1; },
+				[](float* _pValue) { return 1; },
+				[](ColorRGB* _pValue) { return 1; },
+			};
+			return std::visit(oVisitor, m_oValue);
+		}
 	};
 
 	enum ArgumentID
 	{
+		Help,
 		InputMask,
 		InputNormal,
 		InputAlbedo,
@@ -168,6 +213,7 @@ private:
 	};
 
 	const std::map<const char*, ArgumentID, CompareString> m_oArgumentNamesToIDs = {
+		{"h", Help },
 		{"im", InputMask},
 		{"in", InputNormal},
 		{"ia", InputAlbedo},
@@ -188,6 +234,9 @@ private:
 
 	const std::map<ArgumentID, Argument> m_oArgumentDefinitions =
 	{
+		{ Help,{
+			.m_oValue = &m_bShowHelp,
+			.m_sArgumentDescription = "Show list of accepted arguments" } },
 		{InputMask,{
 			.m_oValue = &m_sMaskFilename,
 			.m_sArgumentDescription = "Input mask file (.BMP)"}},
@@ -240,6 +289,8 @@ private:
 
 	void Validate() const
 	{
+		if(m_bShowHelp)
+			return;
 		if (m_sBaseOutputFilename == nullptr)
 			throw std::runtime_error("Missing base output texture filename.");
 		if (m_sOutputMaterialsFilename == nullptr && m_sNormalFilename != nullptr)
@@ -253,6 +304,4 @@ private:
 		if (m_fSpecularIntensity < 0.f || m_fSpecularIntensity > 1.f)
 			throw std::runtime_error("Specified specular intesity is not in the [0, 1] range");
 	}
-
-	
 };

@@ -70,6 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(ProjectDir);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(ProjectDir);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -161,14 +167,17 @@
     <ClCompile Include="Material\SpecularComponent.ixx" />
     <ClCompile Include="Material\SpecularData.ixx" />
     <ClCompile Include="Encoder\Encoder.ixx" />
-    <ClCompile Include="mian.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Encoder\NormalMapPalette.ixx" />
     <ClCompile Include="Encoder\PaletteReduction.ixx" />
     <ClCompile Include="Types\Color.ixx" />
     <ClCompile Include="Types\LABColor.ixx" />
     <ClCompile Include="Types\RawImage.ixx" />
     <ClCompile Include="Types\Vector3.ixx" />
+    <ClCompile Include="UIEngine\UIEngine.ixx" />
+    <ClCompile Include="UIEngine\Window.ixx" />
     <ClCompile Include="Utils\CollectionUtils.ixx" />
+    <ClCompile Include="Utils\DebugUtils.ixx" />
     <ClCompile Include="Utils\ExceptionUtils.ixx" />
     <ClCompile Include="Utils\HashUtils.ixx" />
     <ClCompile Include="Utils\KMeansUtils.ixx" />
@@ -178,6 +187,10 @@
     <ClCompile Include="Utils\NormalMapUtils.ixx" />
     <ClCompile Include="Utils\PaletteUtils.ixx" />
     <ClCompile Include="Utils\SerializationUtils.ixx" />
+    <ClCompile Include="Utils\StringUtils.ixx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Utils\DebugUtilsMacros.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

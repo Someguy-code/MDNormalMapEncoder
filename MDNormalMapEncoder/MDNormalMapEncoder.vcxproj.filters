@@ -31,6 +31,12 @@
     <Filter Include="Archivos de origen\Containers">
       <UniqueIdentifier>{18151f2f-059b-4b3a-bb18-36d4c2783602}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de encabezado\Utils">
+      <UniqueIdentifier>{eca2c641-cb42-4f65-9142-2ffdbc43a350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\UIEngine">
+      <UniqueIdentifier>{601a6c8e-a27e-4d02-af1e-608fbe78f261}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandLineArguments.ixx">
@@ -45,7 +51,7 @@
     <ClCompile Include="Encoder\Encoder.ixx">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="mian.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Encoder\NormalMapPalette.ixx">
@@ -144,5 +150,22 @@
     <ClCompile Include="Utils\MultithreadUtils.ixx">
       <Filter>Archivos de origen\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\DebugUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\StringUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="UIEngine\UIEngine.ixx">
+      <Filter>Archivos de origen\UIEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="UIEngine\Window.ixx">
+      <Filter>Archivos de origen\UIEngine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Utils\DebugUtilsMacros.h">
+      <Filter>Archivos de encabezado\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -14,7 +14,7 @@ concept HasProcessWindowMessages = requires (T Reference, HWND _hWND, UINT _uMes
 	{ Reference.ProcessWindowMessages(_hWND, _uMessage, _wPARAM, _lPARAM) } -> std::same_as<LRESULT>;
 };
 
-export template</*HasProcessWindowMessages*/ class T>
+export template<class T>
 class Window
 {
 	T* m_pWindowMessagesProcessor;
@@ -58,23 +58,26 @@ public:
 	Window(T* _pWindowMessagesProcessor, size_t _uWidth, size_t _uHeight, LPCWSTR _sTitle, LPCWSTR _sApplicationName, bool _bHasTitleBar, bool _bIsResizable)
 		: m_pWindowMessagesProcessor(_pWindowMessagesProcessor), m_uWidth(_uWidth), m_uHeight(_uHeight), m_sTitle(_sTitle), m_sApplicationName(_sApplicationName)
 	{
+		static_assert(HasProcessWindowMessages<T>, "T must implement ProcessWindowMessages(HWND, UINT, WPARAM, LPARAM) -> LRESULT");
+
 		// Get the instance of this application.
 		m_oModuleHandle = GetModuleHandle(NULL);
 		
 		// Setup the window class with default settings.
-		WNDCLASSEX oWindowClass;
-		oWindowClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-		oWindowClass.lpfnWndProc = &ProcessWindowMessages;
-		oWindowClass.cbClsExtra = 0;
-		oWindowClass.cbWndExtra = sizeof(LONG_PTR);
-		oWindowClass.hInstance = m_oModuleHandle;
-		oWindowClass.hIcon = LoadIcon(NULL, IDI_WINLOGO);
-		oWindowClass.hIconSm = oWindowClass.hIcon;
-		oWindowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-		oWindowClass.hbrBackground = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
-		oWindowClass.lpszMenuName = nullptr;
-		oWindowClass.lpszClassName = _sApplicationName;
-		oWindowClass.cbSize = sizeof(WNDCLASSEX);
+		WNDCLASSEX oWindowClass = {
+			.cbSize = sizeof(WNDCLASSEX),
+			.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
+			.lpfnWndProc = &ProcessWindowMessages,
+			.cbClsExtra = 0,
+			.cbWndExtra = sizeof(LONG_PTR),
+			.hInstance = m_oModuleHandle,
+			.hIcon = LoadIcon(NULL, IDI_WINLOGO),
+			.hCursor = LoadCursor(NULL, IDC_ARROW),
+			.hbrBackground = (HBRUSH)GetStockObject(DKGRAY_BRUSH),
+			.lpszMenuName = nullptr,
+			.lpszClassName = _sApplicationName,
+			.hIconSm = oWindowClass.hIcon,
+		};
 
 		// Register the window class.
 		RegisterClassEx(&oWindowClass);
@@ -95,6 +98,7 @@ public:
 		// Create the window with the screen settings and get the handle to it.
 		m_oWindowHandle = CreateWindowEx(uStyleEX, _sApplicationName, _sTitle, uStyle,
 			iWindowPositionX, iWindowPositionY, iWindowWidth, iWindowHeight, NULL, NULL, m_oModuleHandle, NULL);
+		// Set the pointer to the message handler object.
 		SetWindowLongPtrW(m_oWindowHandle, WINDOW_OBJECT_OFFSET, reinterpret_cast<LONG_PTR>(this));
 
 		const bool bSuccess = m_oWindowHandle != NULL;

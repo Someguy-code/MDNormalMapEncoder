@@ -52,11 +52,9 @@ public:
 		{
 		case WM_CLOSE:
 			DestroyWindow(_hWND);
-			uResult = 0;
 			break;
 		case WM_DESTROY:
 			PostQuitMessage(0);
-			uResult = 0;
 			break;
 		default:
 			uResult = DefWindowProcA(_hWND, _uMessage, _wPARAM, _lPARAM);
@@ -65,3 +63,4 @@ public:
 		return uResult;
 	}
 };
+

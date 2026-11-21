@@ -37,6 +37,9 @@
     <Filter Include="Archivos de origen\UIEngine">
       <UniqueIdentifier>{601a6c8e-a27e-4d02-af1e-608fbe78f261}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de origen\UIEngine\Graphics">
+      <UniqueIdentifier>{49643ee5-ba5c-4a60-94e5-2e430e8ed670}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandLineArguments.ixx">
@@ -161,6 +164,15 @@
     </ClCompile>
     <ClCompile Include="UIEngine\Window.ixx">
       <Filter>Archivos de origen\UIEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="UIEngine\Graphics\D3D11Class.ixx">
+      <Filter>Archivos de origen\UIEngine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="UIEngine\Graphics\GraphicsClass.ixx">
+      <Filter>Archivos de origen\UIEngine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\ScreenUtils.ixx">
+      <Filter>Archivos de origen\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
